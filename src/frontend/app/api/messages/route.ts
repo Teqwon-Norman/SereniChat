@@ -74,7 +74,6 @@ export async function POST(
                 messages: [lastMessage]
             })
         });
-
         return NextResponse.json(newMessage);
 
     } catch (error: any) {
