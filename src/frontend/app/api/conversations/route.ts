@@ -31,7 +31,7 @@ export async function POST(request: Request) {
         });
 
         const singleConversation = existingConversations[0];
-
+        
         if (singleConversation) {
             return NextResponse.json(singleConversation);
         }
@@ -42,6 +42,9 @@ export async function POST(request: Request) {
                     connect: [
                         {
                             id: currentUser.id
+                        },
+                        {
+                            id: userId
                         }
                     ]
                 }
