@@ -9,7 +9,6 @@ export async function POST(
     try {
         const currentUser = await getCurrentUser();
         const body = await request.json();
-        console.log(body, 'BODY');
         const { message, conversationId } = body;
         
         if (!currentUser?.id || !currentUser?.email) {
@@ -35,26 +34,26 @@ export async function POST(
             }
         });
 
-        const updatedConversation = await prisma.conversation.update({
-            where: {
-                id: conversationId
-            },
-            data: {
-                lastMessageAt: new Date(),
-                messages: {
-                    connect: {
-                        id: newMessage.id
-                    }
-                }
-            },
-            include: {
-                users: true,
-                messages: { }
-            }
-        });
+        // const updatedConversation = await prisma.conversation.update({
+        //     where: {
+        //         id: conversationId
+        //     },
+        //     data: {
+        //         lastMessageAt: new Date(),
+        //         messages: {
+        //             connect: {
+        //                 id: newMessage.id
+        //             }
+        //         }
+        //     },
+        //     include: {
+        //         user: true,
+        //         messages: true
+        //     }
+        // });
 
 
-        const lastMessage = updatedConversation.messages[updatedConversation.messages.length - 1];
+        // const lastMessage = updatedConversation.messages[updatedConversation.messages.length - 1];
         return NextResponse.json(newMessage);
 
     } catch (error: any) {

@@ -2,32 +2,16 @@ import getCurrentUser from "../../../app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import prisma from '../../../app/modules/prismadb';
 
-export async function POST(request: Request) {
+export async function POST() {
     try {
         const currentUser = await getCurrentUser();
-        const body = await request.json();
-        const { userId } = body;
 
         if (!currentUser?.id || !currentUser?.email) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
         const existingConversations = await prisma.conversation.findMany({
-            where: {
-                OR: [
-                    {
-                        userIds: {
-                            equals: [currentUser.id, userId]
-                        }
-                    },
-                    {
-                        userIds: {
-                            equals: [userId, currentUser.id]
-                        }
-                    },
-
-                ]
-            }
+            where: { userId: { equals: currentUser.id } }
         });
 
         const singleConversation = existingConversations[0];
@@ -38,20 +22,11 @@ export async function POST(request: Request) {
 
         const newConversation = await prisma.conversation.create({
             data: {
-                users: {
-                    connect: [
-                        {
-                            id: currentUser.id
-                        },
-                        {
-                            id: userId
-                        }
-                    ]
+                user: {
+                    connect: { id: currentUser.id }
                 }
             },
-            include: {
-                users: true
-            }
+            include: { user: true }
         });
 
         return NextResponse.json(newConversation);

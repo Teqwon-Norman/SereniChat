@@ -13,7 +13,7 @@ const getConversationById = async (conversationId: string) => {
                 id: conversationId
             },
             include: {
-                users: true
+                user: true
             }
         });
 
