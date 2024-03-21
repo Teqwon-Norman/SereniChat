@@ -9,52 +9,48 @@ export async function POST(
     try {
         const currentUser = await getCurrentUser();
         const body = await request.json();
-        const { message, conversationId } = body;
+        const { message, conversationId, isUser } = body;
         
         if (!currentUser?.id || !currentUser?.email) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        const newMessage = await prisma.message.create({
-            data: {
-                body: message,
-                conversation: {
-                    connect: {
-                        id: conversationId
+        if (isUser) {
+            const newMessage = await prisma.message.create({
+                data: {
+                    body: message,
+                    conversation: {
+                        connect: {
+                            id: conversationId
+                        }
+                    },
+                    sender: {
+                        connect: {
+                            id: currentUser.id
+                        }
                     }
                 },
-                sender: {
-                    connect: {
-                        id: currentUser.id
+                include: {
+                    sender: true
+                }
+            });
+
+            return NextResponse.json(newMessage);
+
+        } else {
+            const newMessage = await prisma.message.create({
+                data: {
+                    body: message,
+                    conversation: {
+                        connect: {
+                            id: conversationId
+                        }
                     }
                 }
-            },
-            include: {
-                sender: true
-            }
-        });
+            });
 
-        // const updatedConversation = await prisma.conversation.update({
-        //     where: {
-        //         id: conversationId
-        //     },
-        //     data: {
-        //         lastMessageAt: new Date(),
-        //         messages: {
-        //             connect: {
-        //                 id: newMessage.id
-        //             }
-        //         }
-        //     },
-        //     include: {
-        //         user: true,
-        //         messages: true
-        //     }
-        // });
-
-
-        // const lastMessage = updatedConversation.messages[updatedConversation.messages.length - 1];
-        return NextResponse.json(newMessage);
+            return NextResponse.json(newMessage);
+        }
 
     } catch (error: any) {
         console.log(error, 'ERROR_MESSSAGES');

@@ -10,15 +10,15 @@ export async function POST() {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        const existingConversations = await prisma.conversation.findMany({
-            where: { userId: { equals: currentUser.id } }
-        });
+        // const existingConversations = await prisma.conversation.findMany({
+        //     where: { userId: { equals: currentUser.id } }
+        // });
 
-        const singleConversation = existingConversations[0];
+        // const singleConversation = existingConversations[0];
         
-        if (singleConversation) {
-            return NextResponse.json(singleConversation);
-        }
+        // if (singleConversation) {
+        //     return NextResponse.json(singleConversation);
+        // }
 
         const newConversation = await prisma.conversation.create({
             data: {
