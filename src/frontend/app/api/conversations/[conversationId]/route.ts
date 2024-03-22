@@ -2,13 +2,11 @@ import getCurrentUser from '../../../../app/actions/getCurrentUser';
 import { NextResponse } from 'next/server';
 import prisma from '../../../../app/modules/prismadb';
 
-interface IParams {
-    conversationId?: string;
-}
 
-export async function DELETE(request: Request, { params }: { params: IParams }) {
+export async function DELETE(request: Request) {
     try {
-        const { conversationId } = params;
+        const body = await request.json();
+        const { conversationId } = body;
         const currentUser = await getCurrentUser();
 
         if(!currentUser) {
@@ -20,7 +18,7 @@ export async function DELETE(request: Request, { params }: { params: IParams }) 
                 id: conversationId
             },
             include: {
-                users: true
+                user: true
             }
         });
 
@@ -31,8 +29,8 @@ export async function DELETE(request: Request, { params }: { params: IParams }) 
         const deletedConversation = await prisma.conversation.deleteMany({
             where: {
                 id: conversationId,
-                userIds: {
-                    hasSome: [currentUser.id]
+                userId: {
+                    equals: currentUser.id
                 }
             }
         });
