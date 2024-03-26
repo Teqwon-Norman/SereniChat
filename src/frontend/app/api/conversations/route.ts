@@ -1,6 +1,7 @@
 import getCurrentUser from "../../../app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
 import prisma from '../../../app/modules/prismadb';
+import { pusherServer } from '../../../app/modules/pusher';
 
 export async function POST() {
     try {
@@ -10,16 +11,6 @@ export async function POST() {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        // const existingConversations = await prisma.conversation.findMany({
-        //     where: { userId: { equals: currentUser.id } }
-        // });
-
-        // const singleConversation = existingConversations[0];
-        
-        // if (singleConversation) {
-        //     return NextResponse.json(singleConversation);
-        // }
-
         const newConversation = await prisma.conversation.create({
             data: {
                 user: {
@@ -28,6 +19,10 @@ export async function POST() {
             },
             include: { user: true }
         });
+
+        if (newConversation.user.email) {
+            pusherServer.trigger(newConversation.user.email, 'conversation:new', newConversation);
+        }
 
         return NextResponse.json(newConversation);
 

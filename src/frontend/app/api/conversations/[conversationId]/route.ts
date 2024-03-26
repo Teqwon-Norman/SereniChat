@@ -2,6 +2,7 @@ import getCurrentUser from '../../../../app/actions/getCurrentUser';
 import { NextResponse } from 'next/server';
 import prisma from '../../../../app/modules/prismadb';
 
+import { pusherServer } from '../../../../app/modules/pusher';
 
 export async function DELETE(request: Request) {
     try {
@@ -34,6 +35,12 @@ export async function DELETE(request: Request) {
                 }
             }
         });
+
+        if (existingConversation.user.email) {
+            if (existingConversation.user.email) {
+                pusherServer.trigger(existingConversation.user.email, 'conversation:remove', existingConversation);
+            }
+        }
 
         return NextResponse.json(deletedConversation, { status: 200 });
 
