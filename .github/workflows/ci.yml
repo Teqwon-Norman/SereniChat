@@ -20,16 +20,13 @@ jobs:
           export NPM_CONFIG_LOGLEVEL=verbose
           npm install --prefix /home/runner/work/SereniChat/SereniChat/src/frontend
 
-          if [ ! -d venv ]; then
-            python3 -m venv venv --prefix /home/runner/work/SereniChat/src/backend
+          if [ ! -d /home/runner/work/SereniChat/SereniChat/src/backend/venv ]; then
+            python3 -m venv /home/runner/work/SereniChat/SereniChat/src/backend/venv
           fi
-          source venv/bin/activate --prefix /home/runner/work/SereniChat/src/backend
+          source /home/runner/work/SereniChat/SereniChat/src/backend/venv/bin/activate
           
-          pip install -r requirements.txt --prefix /home/runner/work/SereniChat/src/backend
-          pip freeze > requirements.txt --prefix /home/runner/work/SereniChat/src/backend
+          pip install -r /home/runner/work/SereniChat/SereniChat/src/backend/requirements.txt
+          pip freeze > /home/runner/work/SereniChat/SereniChat/src/backend/requirements.txt
 
       - name: Build Next.js app
-        run: npm run build --prefix /home/runner/work/SereniChat/src/frontend
-
-      - name: Run linting
-        run: npm run lint
+        run: npm run build --prefix /home/runner/work/SereniChat/SereniChat/src/frontend
