@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js & Python
         run: |
           export NPM_CONFIG_LOGLEVEL=verbose
-          npm install --prefix /home/runner/work/SereniChat/src/frontend
+          npm install --prefix /home/runner/work/SereniChat/SereniChat/src/frontend
 
           if [ ! -d venv ]; then
             python3 -m venv venv --prefix /home/runner/work/SereniChat/src/backend
