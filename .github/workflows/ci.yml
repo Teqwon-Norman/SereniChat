@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Node.js & Python
         run: |
-          npm install --prefix /home/runner/work/SereniChat/src/frontend/package.json
+          npm install --prefix /home/runner/work/SereniChat/src/frontend
 
           if [ ! -d venv ]; then
             python3 -m venv venv --prefix /home/runner/work/SereniChat/src/backend
@@ -28,7 +28,7 @@ jobs:
           pip freeze > requirements.txt --prefix /home/runner/work/SereniChat/src/backend
 
       - name: Build Next.js app
-        run: npm run build --prefix /home/runner/work/SereniChat/src/frontend/package.json
+        run: npm run build --prefix /home/runner/work/SereniChat/src/frontend
 
       - name: Run linting
         run: npm run lint
