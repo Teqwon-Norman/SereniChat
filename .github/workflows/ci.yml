@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup Node.js & Python
         run: |
+          export NPM_CONFIG_LOGLEVEL=verbose
           npm install --prefix /home/runner/work/SereniChat/src/frontend
 
           if [ ! -d venv ]; then
