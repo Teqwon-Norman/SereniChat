@@ -1,0 +1,37 @@
+name: Integration CI
+
+run-name: "${{ contains(github.head_ref, 'feature/') && 'Feature' || contains(github.head_ref, 'bugfix/') && 'Bugfix' || 'Update' }}: ${{ github.head_ref }} by @${{ github.actor }}"
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - master
+  pull_request:
+    types: [closed]
+    branches-ignore:
+      - main
+      - master
+      
+jobs:
+  post-merge:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_PUSHER_APP_KEY: ${{ secrets.NEXT_PUBLIC_PUSHER_APP_KEY }}
+      PUSHER_APP_ID: ${{ secrets.PUSHER_APP_ID }}
+      PUSHER_APP_SECRET: ${{ secrets.PUSHER_APP_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          
+      - name: Install Node.js Dependencies
+        run: npm install --prefix ./src/frontend
+
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=./src/frontend/prisma/schema.prisma
+
+      - name: Build Project
+        run: npm run build --prefix ./src/frontend

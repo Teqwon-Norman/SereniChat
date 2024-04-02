@@ -1,0 +1,42 @@
+name: Python Setup
+
+run-name: "${{ contains(github.head_ref, 'feature/') && 'Feature' || contains(github.head_ref, 'bugfix/') && 'Bugfix' || 'Update' }}: ${{ github.head_ref }} by @${{ github.actor }}"
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - master
+  pull_request:
+    types: [closed]
+    branches-ignore:
+      - main
+      - master
+
+jobs:
+  post-merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check if Python virtual environment exists
+        id: check-venv
+        run: |
+          if [ -d "./src/backend/venv" ]; then
+            echo "venv_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "venv_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Virtual Environment
+        if: steps.check-venv.outputs.venv_exists == 'false'
+        run: |
+          python -m venv ./src/backend/venv
+          source ./src/backend/venv/bin/activate
+
+      - name: Install Python Dependencies
+        run: |
+          pip install -r ./src/backend/requirements.txt
+          pip freeze > ./src/backend/requirements.txt
