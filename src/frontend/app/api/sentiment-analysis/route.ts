@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         const { inputs } = body;
-        const response = await axios.post('https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions', {
+        const response = await axios.post('https://dz0xs7es0lrkmw5b.us-east4.gcp.endpoints.huggingface.cloud', {
             inputs,
             
             headers : {
